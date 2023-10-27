@@ -17,17 +17,20 @@ JPA가 엔티티 객체를 생성할 때 기본 생성자를 사용하므로 이
 엔티티와 매핑할 테이블을 지정한다. 
 
 **hibernate.hbm2ddl.auto 속성**
-- create : 기존 테이블을 삭제하고 새로 생성한다 (DROP + CREATE)
-- create-drop : create 속성에 추가로 애플리케이션을 종료할 때 생성한 DDL을 제거한다. (DROP + CREATE + DROP)
-- update : 데이터베이스 테이블과 엔티티 매핑정보를 비교해서 변경사항만 수정한다
-- validate : 데이터베이스 테이블과 엔티티 매핑정보를 비교해서 차이가 있으면 경고를 남기고 애플리케이션을 실행하지 않는다. 이 설정은 DDL을 수정하지 않는다.
+- create : 기존 테이블을 삭제하고 새로 생성한다 (DROP + CREATE)  
+- create-drop : create 속성에 추가로 애플리케이션을 종료할 때 생성한 DDL을 제거한다. (DROP + CREATE + DROP)  
+- update : 데이터베이스 테이블과 엔티티 매핑정보를 비교해서 변경사항만 수정한다  
+- validate : 데이터베이스 테이블과 엔티티 매핑정보를 비교해서 차이가 있으면 경고를 남기고 애플리케이션을 실행하지 않는다. 이 설정은 DDL을 수정하지 않는다.  
 - none : 자동 생성 기능을 사용하지 않으려면 hibernate.hbm2ddl.auto 속성 자체를 삭제하거나 유효하지 않은 옵션 값을 주면 된다.
-
+- 
 **hibernate.hbm2ddl.auto 주의사항**
 
 운영서버에서 create, create-drop, update처럼 DDL을 수정하는 옵션은 절대 사용하면 안된다. 개발서버나 개발 단계에서만 사용해야 한다.
+
 `개발초기` : create 또는 update
+
 `테스트서버` : update 또는 validate
+
 `스테이징과 운영서버` : validate 또는 none
 
 ### 기본키 매핑
