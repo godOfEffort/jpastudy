@@ -71,7 +71,7 @@ em.persist(board);
 ### SEQUENCE 전략
 데이터베이스 시퀀스는 유일한 값을 순서대로 생성하는 특별한 데이터베이스 오브젝트이다.
 SEQUENCE 전략은 이 시퀀스를 사용해서 기본 키를 생성한다.
-```oracle
+```
 CREATE TABLE BOARD(
  ID BIGINT NOT NULL PRIMARY KEY,
  DATA VARCHAR(255)
@@ -122,7 +122,7 @@ JPA는 시퀀스에 접근하는 횟수를 줄이기 위해 @SequenceGenerator.a
 키 생성 전용 테이블을 하나 만들고 여기에 이름과 값으로 사용할 컬럼을 만들어 데이터베이스 
 시퀀스를 흉내내는 전략이다. 이 전략은 테이블을 사용하므로 모든 데이트베이스에 적용할 수 있다.
 
-```oracle
+```
 CREATE TABLE MY_SEQUENCES (
     sequence_name varchar(255) not null,
     next_val bigint,
