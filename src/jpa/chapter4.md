@@ -15,6 +15,7 @@ JPA가 엔티티 객체를 생성할 때 기본 생성자를 사용하므로 이
 
 ### @Table
 엔티티와 매핑할 테이블을 지정한다. 
+
 **hibernate.hbm2ddl.auto 속성**
 - create : 기존 테이블을 삭제하고 새로 생성한다 (DROP + CREATE)
 - create-drop : create 속성에 추가로 애플리케이션을 종료할 때 생성한 DDL을 제거한다. (DROP + CREATE + DROP)
