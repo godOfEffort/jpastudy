@@ -24,6 +24,7 @@ JPA가 엔티티 객체를 생성할 때 기본 생성자를 사용하므로 이
 - none : 자동 생성 기능을 사용하지 않으려면 hibernate.hbm2ddl.auto 속성 자체를 삭제하거나 유효하지 않은 옵션 값을 주면 된다.
 
 **hibernate.hbm2ddl.auto 주의사항**
+
 운영서버에서 create, create-drop, update처럼 DDL을 수정하는 옵션은 절대 사용하면 안된다. 개발서버나 개발 단계에서만 사용해야 한다.
 `개발초기` : create 또는 update
 `테스트서버` : update 또는 validate
@@ -39,6 +40,7 @@ JPA가 제공하는 데이터베이스 기본 키 생성 전략
 - 기본 키를 직접할당하려면 @Id만 사용하면 되고, 자동생성 전략을 사용하려면 @Id에 @GeneratedValue를 추가하고 원하는 키 생성 전략을 선택하면 된다.
 
 **주의사항**
+
 키 생성 전략을 사용하려면 persistence.xml에 hibernate.id.new_generator_mappings=true 속성을 반드시 추가해야 한다.
 
 ### 기본 키 직접 할당 전략
@@ -65,6 +67,7 @@ em.persist(board);
 얻어오기 위해 데이터베이스를 추가로 조회한다.
 
 **주의**
+
 엔티티가 영속상태가 되려면 식별자가 반드시 필요하다. 그런데 IDENTITY 식별자 생성 전략을 엔티티를 데이터베이스에 저장해야 
 식별자를 구할 수 있으므로 em.persist()를 호출하는 즉시 INSERT SQL이 데이터베이스에 전달된다. 따라서 이 전략은
 트랜잭션을 지원하는 쓰기 지연이 동작하지 않는다.
