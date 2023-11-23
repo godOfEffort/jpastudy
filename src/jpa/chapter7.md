@@ -66,3 +66,113 @@
 주로 등록일, 수정일, 등록자, 수정자 같은 전체 엔티티에서 공통으로 적용하는 정보를 모을 때 사용한다
 
 @Entity 클래스는 엔티티나 @MappedSuperclass로 지정한 클래스만 상속 가능하다.
+
+---
+### 복합 키와 식별 관계 매핑
+
+1. 식별관계
+
+부모 테이블의 기본 키를 내려 받아서 **자식 테이블의 기본 키 + 외래 키**로 사용하는 관계
+
+2. 비식별관계
+
+부모 테이블의 기본 키를 내려 받아서 **자식 테이블의 외래 키**로만 사용하는 관계
+
+   - 1) 필수적 비식별 관계 : 외래 키에 NULL을 허용하지 않는다. 연관관계를 필수적으로 맺어야 한다.
+   - 2) 선택적 비식별 관계 : 외래 키에 NULL을 허용한다. 연관관계를 맺을지 말지 선택할 수 있다.
+   
+   
+3. 복합 키 : 비식별 관계 매핑
+기본 키를 구성하는 컬럼이 하나면 다음처럼 단순하게 매핑한다.
+
+```java
+@Entity
+public class Hello {
+    @Id
+    private String id;
+}
+```
+
+JPA에서 식별자 둘 이상 사용하려면 별도의 식별자 클래스를 만들어야 한다.
+
+```java
+@Entity
+public class Hello {
+    @Id
+    private String id1;
+    
+    @Id
+    private String id2; //실행 시점에 매핑 예외 발생
+
+}
+```
+
+JPA는 복합 키를 지원하기 위해 @IdClass와 @EmbeddedId 2가지 방법을 제공하는데
+
+@IdClass는 관계형 데이터베이스에 가까운 방법이고 @EmbeddedId는 좀 더 객체지향에 가까운 방법이다.
+
+#### @IdClass
+```java
+@Entity
+@IdClass(ParentId.class)
+public class Parent {
+    @Id
+    @Column(name = "PARENT_ID1")
+    private String id1;  // ParentId.id1과 연결
+    
+    @Id
+    @Column(name = "PARENT_ID2")
+    private String id2; // ParentId.id2와 연결
+
+}
+```
+
+```java
+import java.io.Serializable;
+public class ParentId implements Serializable {
+    private String id1; //Parent.id1 매핑
+    private String id2; //Parent.id2 매핑
+    
+    public ParentId() {
+    
+    }
+    
+    public ParentId(String id1, String id2) {
+        this.id1 = id1;
+        this.id2 = id2;
+    }
+    
+    @Override
+    public boolean equals(Object o) {}
+
+    @Override
+    public int hashCode() {}
+
+}
+```
+
+@IdClass를 사용할 떄 식별자 클래스는 다음 조건을 만족해야 한다
+
+- 1) **식별자 클래스의 속성명과 엔티티에서 사용하는 식별자의 속성명이 같아야 한다.**
+- 2) Serializable 인터페이스를 구현해야 한다
+- 3) equals, hashCode를 구현해야 한다
+- 4) 기본 생성자가 있어야 한다
+- 5) 식별자 클래스는 public이어야 한다.
+
+
+```java
+@Entity
+public class Child {
+    @Id
+    private String id;
+    
+    @ManyToOne
+    @JoinColumns( {
+        @JoinColumn(name ="PARENT_ID1", 
+            referencedColumnName = "PARENT_ID1"),
+        @JoinColumn(name ="PARENT_ID2", 
+            referencedColumnName = "PARENT_ID2")       
+    })
+    private Parent parent;
+}
+```
