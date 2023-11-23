@@ -176,3 +176,38 @@ public class Child {
     private Parent parent;
 }
 ```
+
+
+#### @EmbeddedId
+
+```java
+@Entity
+public class Parent {
+    @EmbeddedId
+    private Parent id;
+    
+    private String name;
+}
+```
+
+```java
+import java.io.Serializable;
+public class ParentId implements Serializable {
+    @Column(name = "PARENT_ID1")
+    private String id1;
+    @Column(name = "PARENT_ID2")
+    private String id2;
+
+    //equals and hashCode 구현
+}
+```
+
+@IdClass와는 다르게 @EmbeddedId를 적용한 식별자 클래스는 **식별자 클래스에 기본 키를 직접 매핑한다**
+
+@EmbeddedId를 적용한 식별자 클래스는 다음 조건을 만족해야 한다.
+
+1) @EmbeddedId 어노테이션을 붙여주어야 한다
+2) Serializable 인터페이스를 구현해야 한다
+3) equals, hashCode를 구현해야 한다
+4) 기본 생성자가 있어야 한다
+5) 식별자 클래스는 public 이어야 한다
