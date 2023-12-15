@@ -147,3 +147,40 @@ Team team = member.getTeam(); //프록시 객체
 1) 지연 로딩 : 연관된 엔티티를 프록시로 조회한다. 프록시를 실제 사용할 때 초기화화면서 데이터베이스를 조회한다.
 
 2) 즉시 로딩 : 연관된 엔티티를 즉시 조회한다. 하이버네이트는 가능하면 SQL 조인을 사용해서 한 번에 조회한다.
+
+
+### 영속성 전이 : CASCADE
+
+특정 엔티티를 영속 상태로 만들 때 연관된 엔티티도 함께 영속 상태로 만들고 싶으면 영속성 전이
+
+기능을 사용하면 된다.
+
+**JPA는 엔티티를 저장할 때 연관된 모든 엔티티는 영속상태야 한다**
+
+#### 영속성 전이 : 저장
+
+영속성 전이를 활성화화는 CASCADE옵션을 적용해보자.
+
+```java
+@Entity
+public class Parent{
+    @OneToMany(mappedBy = "parent", cascade =CascadeType.PERSIST)
+    private List<Child> children = new ArrayList<Child>();
+}
+```
+
+이 옵션을 적용하면 간편하게 부모와 자식 엔티티를 한 번에 영속화할 수 있다.
+
+```java
+  Child child1 = new Child();
+  Child child2 = new Child();     
+
+  Parent parent = new Parent();
+  child1.setParent(parent); //연관관계 추가
+  child2.setParent(parent); //연관관계 추가
+  parent.getChildren().add(child1);
+  parent.getChildren().add(child2);
+
+  em.persist(parent);
+
+```
