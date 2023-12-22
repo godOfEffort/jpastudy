@@ -210,3 +210,103 @@ public class Address {
 1. 동일성 비교 : 인스턴스의 참조 값을 비교, == 사용
 
 2. 동등성 비교 : 인스턴스의 값을 비교, equals() 사용
+
+Address 값 타입을 a == b 로 동일성 비교하면 둘은 서로 다른 인스턴스이므로 결과는 거짓이다.
+
+하지만 이것은 기대하는 결과가 아니다. 값 타입은 비록 인스턴스가 달라도 그 안에 값이 같으면 같은 것으로 봐야 한다.
+
+값 타입은 비록 인스턴스가 달라도 그 안에 값이 같으면 같은 것으로 봐야 한다. 
+
+따라서 값 타입을 비교할 떄는 a.equals(b)를 사용해서 동등성 비교를 해야 한다.
+
+물론 Address의 equals() 메소드를 재정의해야 한다.
+
+**자바에서 equals()를 재정의하면 hashCode()도 재정의하는 것이 안전하다. 그렇지 않으면 해시를 사용하는 컬렉션이 정상동작하지 않는다.**
+
+### 값 타입 컬렉션
+
+값 타입을 하나 이상 저장하려면 컬렉션에 보관하여 @ElementCollection, @CollectionTable 어노테이션을 사용하면 된다.
+
+```java
+@Entity
+public class Member {
+    @Id @GeneratedValue
+    private Long id;    
+
+    @Embedded Address homeAddress;
+    
+    @ElementCollection
+    @CollectionTable(name ="FAVORITE_FOODS",
+        joinColumns = @JoinColumn(name ="MEMBER_ID"))
+    @Column(name = "FOOD_NAME")
+    private Set<String> favoriteFoods = new HashSet<String>();   
+
+    @ElementCollection
+    @CollectionTable(name ="ADDRESS",
+        joinColumns = @JoinColumn(name ="MEMBER_ID"))
+    @Column(name = "FOOD_NAME")
+    private List<String> addressHistory = new ArrayList<Address>();   
+}
+
+@Embeddable
+public class Address {
+    @Column
+    private String city;
+    private String street;
+    private String zipcode;
+}
+``` 
+
+favoriteFoods는 기본값 타입인 String을 컬렉션으로 가진다. 
+
+데이터베이스 테이블로 매핑해야 되는데 관계형 데이터베이스의 테이블은 컬럼 안에 컬렉션을 포함할 수 없다.
+
+따라서 별도의 테이블을 추가하고 @CollectionTable를 사용해서 추가한 테이블을 매핑해야 한다.
+
+
+### 값 타입 컬렉션 사용
+
+```java
+Member member = new Member();
+
+//임베디드 값 타입
+member.setHomeAddress(new Address("1", "몽동해수욕장", "660-23"));
+
+//기본값 타입 컬렉션
+member.getFavoriteFoods().add("짬봉");
+member.getFavoriteFoods().add("짜장");
+member.getFavoriteFoods().add("탕수육");
+
+//임베디드 값 타입 컬렉션
+member.getAddressHistory().add(new Address("서울", "강남", "123-123"));
+member.getAddressHistory().add(new Address("서울", "강북", "000-000"));
+
+em.persist(member);
+```
+
+**값 타입 컬렉션은 영속성 전이 + 고아 객체 제거 기능을 필수로 가진다**
+
+
+### 값 타입 컬렉션의 제약사항
+
+1. 값 타입은 엔티티와 다르게 식별자 개념이 없다.
+
+2. 값은 변경하면 추적이 어렵다.
+
+3. 값 타입 컬렉션에 변경 사항이 발생하면, 주인 엔티티와 연관된 모든 데이터를 삭제하고, 
+
+   값 타입 컬렉션에 있는 현재 값을 모두 다시 저장한다.
+
+4. 값 타입 컬렉션을 매핑하는 테이블은 모든 컬럼을 묶어서 기본키를 구성해야 함: null 입력도 안되고, 중복 저장도 안된다.
+
+### 값 타입 컬렉션 대안
+
+1. 실무에서는 상황에 따라 값 타입 컬렉션 대신에 일대다 관계를 고려
+
+2. 일대다 관계를 위한 엔티티를 만들고, 여기에서 값 타입을 사용해야 한다.
+
+**값 타입은 정말 값 타입이라 판단될 때만 사용**
+
+**엔티티와 값 타입을 혼동해서 엔티티를 값 타입으로 만들면 안됨**
+
+**식별자가 필요하고, 지속해서 값을 추적, 변경해야 한다면 그것은 값 타입이 아닌 엔티티**
