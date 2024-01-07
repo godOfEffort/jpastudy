@@ -26,8 +26,9 @@ JPQL의 데이터 타입
     
         [orderby_절]
     
-update_문 :: = update_절 [where_절]
-delete_문 :: = delete_절 [where_절]
+    update_문 :: = update_절 [where_절]
+    
+    delete_문 :: = delete_절 [where_절]
 
 
 1) select m from Member as m where m.age > 18
