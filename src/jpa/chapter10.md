@@ -183,6 +183,88 @@ ON절을 활용한 조인(JPA 2.1부터 지원)
 
 - SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t ON m.TEAM_ID=t.id and t.name='A'
 
+---
+
+### 페치 조인
+
+1) SQL 조인 종류가 아니다
+
+2) JPQL 에서 성능 최적화를 위해 제공하는 기능이다.
+
+3) 연관된 엔티티나 컬렉션을 SQL 한 번에 함께 조회하는 기능이다.
+
+4) join fetch 명령어를 사용한다
+
+5) 페치 조인 ::= [ LEFT [OUTER] | INNER ] JOIN FETCH 조인경로
+   
+
+### 엔티티 페치 조인
+
+회원을 조회하면서 연관된 팀도 함께 조회(SQL 한 번에) SQL을 보면 회원 뿐만 아니라 팀(T.*)도 함께 SELECT
+
+```sql
+//JPQL
+select m from Member m join fetch m.team
+```
+
+```sql
+//SQL
+SELECT M.*, T.* FROM MEMBER M
+INNER JOIN TEAM T ON M.TEAM_ID=T.ID
+```
+
+### 페치 조인과 일반 조인의 차이
+JPQL은 결과를 반환할 때 연관관계까지 고려하지 않는다. 단지 SELECT 절에 지정한 엔티티만 조회할 뿐이다.
+따라서 팀 엔티티만 조회하고 연관된 회원 컬렉션은 조회하지 않는다.
+
+페치 조인은 사용할 때만 연관된 엔티티도 함께 조회(즉시로딩)한다.
+페치 조인은 객체 그래프를 SQL 한 번에 조회하는 개념이다.
+
+
+### 페치 조인의 특징과 한계
+1) 페치 조인 대상에는 별칭을 줄 수 없다.
+   - 하이버네이트는 가능하지만 데이터 무결성이 깨질 수 있으므로 조심해서 사용해야 한다.
+  
+2) 둘 이상의 컬렉션은 페치 조인 할 수 없다.
+
+3) 컬렉션을 페치 조인하면 페이징 API(setFirstResult, setMaxResults)를 사용할 수 없다.
+   - 컬렉션이 아닌 단일 값 연관 필드(일대일, 다대일) 들은 페치 조인을 사용해도 페이징 API를 사용할 수 있다.
+   - 하이버네이트에서 컬렉션을 페치 조인하고 페이징 API를 사용하면 경고 로그를 남기면서 메모리에서 페이징 처리를 한다.
+     데이터가 적으면 상관없겠지만 데이터가 많으면 성능 이슈와 메모리 초과 예외가 발생할 수 있어서 위험하다.
+
+### 경로 표현식
+
+#### 용어정리
+1) **상태 필드** : 단순히 값을 저장하기 위한 필드
+2) **연관 필드** : 연관관계를 위한 필드, 임베디드 타입 포함
+    - 단일 값 연관 필드 : @ManyToOne, @OneTooOne, 대상이 엔티티
+    - 컬렉션 값 연관 필드 : @OneToMany, @ManyToMany, 대상이 컬렉션
+
+```java
+@Entity
+public class Member {
+    @Id @GeneratedValue
+    private Long id;
+
+    @Column(name = "name)
+    private String username; //상태필드
+    private Integer age;  //상태필드
+
+    @ManyToOne
+    private Team team; //연관필드(단일 값 연관 필드)
+
+    @OneToMnay
+    private List<Order> orders; // 연관 필드(컬렉션 값 연관 필드)
+}
+```
+
+#### 경로 탐색을 사용한 묵시적 조인 시 주의사항
+- 항상 내부조인을 사용한다
+- 컬렉션은 경로 탐색의 끝, 명시적 조인을 통해 별칭을 얻어야 한다
+- 경로 탐색은 주로 SELECT, WHERE 절에서 사용하지만 묵시적 조인으로 인해 SQL의 FROM (JOIN) 절에 영향을 준다.
+
+**묵시적 조인은 조인이 일어나는 상황을 한눈에 파악하기 어렵기 때문에 가급적 명시적 조인을 사용하는 것이 좋다**
+
   
 
 ### 서브쿼리
@@ -227,7 +309,7 @@ ON절을 활용한 조인(JPA 2.1부터 지원)
   
 **select m from Member m where m.team = ANY (select t from Team t)**
 
-### JPA 써브 쿼리 한계
+### JPA 서브 쿼리 한계
 
 JPA는 WHERE, HAVING 절에서만 서브 쿼리 사용 가능
 
@@ -236,3 +318,23 @@ JPA는 WHERE, HAVING 절에서만 서브 쿼리 사용 가능
 - FROM 절의 서브 쿼리는 현재 JPQL에서 불가능
 
 - 조인으로 풀 수 있으면 풀어서 해결
+  
+
+### JPQL 타입 표현
+1) 문자: ‘HELLO’, ‘She’’s’
+2) 숫자: 10L(Long), 10D(Double), 10F(Float)
+3) Boolean: TRUE, FALSE
+4) ENUM: jpabook.MemberType.Admin (패키지명 포함)
+5) 엔티티 타입: TYPE(m) = Member (상속 관계에서 사용)
+
+### 조건식 - CASE 식
+- COALESCE: 하나씩 조회해서 null이 아니면 반환
+- NULLIF: 두 값이 같으면 null 반환, 다르면 첫번째 값 반환
+
+사용자 이름이 없으면 이름 없는 회원을 반환
+
+select coalesce(m.username,'이름 없는 회원') from Member m
+
+사용자 이름이 '관리자'면 null을 반환하고 나머지는 본인의 이름을 반환
+
+select NULLIF(m.username, '관리자') from Member m
