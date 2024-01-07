@@ -116,6 +116,7 @@ SELECT 절에 조회할 대상을 지정하는 것
 
      - DISTINCT로 중복 제거
 
+---
 
 ### 프로젝션 - 여러 값 조회
 **SELECT m.username, m.age FROM Member m**
@@ -133,6 +134,10 @@ SELECT 절에 조회할 대상을 지정하는 것
 - 패키지 명을 포함한 전체 클래스 명 입력
 
 - 순서와 타입이 일치하는 생성자 필요
+
+
+---
+
 
 ### 페이징 API
 
@@ -152,6 +157,7 @@ List<Member> resultList = em.createQuery(jpql, Member.class)
     .getResultList();
 ```
 
+
 ### 조인
 
 - 내부 조인: **SELECT m FROM Member m [INNER] JOIN m.team t**
@@ -159,6 +165,7 @@ List<Member> resultList = em.createQuery(jpql, Member.class)
 - 외부 조인: **SELECT m FROM Member m LEFT [OUTER] JOIN m.team t**
 
 - 세타 조인: **select count(m) from Member m, Team t where m.username = t.name**
+  
 
 ### 조인 ON 절
 
@@ -167,6 +174,7 @@ ON절을 활용한 조인(JPA 2.1부터 지원)
 - 1. 조인 대상 필터링
 
 - 2. 연관관계 없는 엔티티 외부 조인(하이버네이트 5.1부터)
+     
 
 ### 조인 대상 필터링
 예) 회원과 팀을 조인하면서, 팀 이름이 A인 팀만 조인
@@ -174,6 +182,8 @@ ON절을 활용한 조인(JPA 2.1부터 지원)
 - JPQL: **SELECT m, t FROM Member m LEFT JOIN m.team t on t.name = 'A'**
 
 - SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t ON m.TEAM_ID=t.id and t.name='A'
+
+  
 
 ### 서브쿼리
 
