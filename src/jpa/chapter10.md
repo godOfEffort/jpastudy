@@ -121,11 +121,11 @@ SELECT 절에 조회할 대상을 지정하는 것
 ### 프로젝션 - 여러 값 조회
 **SELECT m.username, m.age FROM Member m**
 
-- 1. Query 타입으로 조회
+- Query 타입으로 조회
 
-- 2. Object[] 타입으로 조회
+- Object[] 타입으로 조회
 
-- 3. new 명령어로 조회
+- new 명령어로 조회
 
 - 단순 값을 DTO로 바로 조회
 
