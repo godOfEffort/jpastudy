@@ -333,8 +333,12 @@ JPA는 WHERE, HAVING 절에서만 서브 쿼리 사용 가능
 
 사용자 이름이 없으면 이름 없는 회원을 반환
 
+```sql
 select coalesce(m.username,'이름 없는 회원') from Member m
+```
 
 사용자 이름이 '관리자'면 null을 반환하고 나머지는 본인의 이름을 반환
 
+```sql
 select NULLIF(m.username, '관리자') from Member m
+```
