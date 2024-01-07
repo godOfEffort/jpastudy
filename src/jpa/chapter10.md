@@ -78,24 +78,24 @@ em.createQuery("SELECT m.username, m.age from Member m");
 
 1) query.getResultList(): 결과가 하나 이상일 때, 리스트 반환
 
- - 결과가 없으면 빈 리스트 반환
+     - 결과가 없으면 빈 리스트 반환
 
 2) query.getSingleResult(): 결과가 정확히 하나, 단일 객체 반환
 
- - 결과가 없으면: javax.persistence.NoResultException
+     - 결과가 없으면: javax.persistence.NoResultException
 
- - 둘 이상이면: javax.persistence.NonUniqueResultException
+     - 둘 이상이면: javax.persistence.NonUniqueResultException
 
 
 ### 파라미터 바인딩 - 이름 기준, 위치 기준
 
 1) SELECT m FROM Member m where m.username=**:username**
 
-query.setParameter("**username**", usernameParam);
+    query.setParameter("**username**", usernameParam);
 
 2) SELECT m FROM Member m where m.username=**?1**
 
-query.setParameter(**1**, usernameParam);
+    query.setParameter(**1**, usernameParam);
 
 
 ---
