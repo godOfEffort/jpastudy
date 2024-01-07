@@ -342,3 +342,54 @@ select coalesce(m.username,'이름 없는 회원') from Member m
 ```sql
 select NULLIF(m.username, '관리자') from Member m
 ```
+
+
+### Named 쿼리 - 정적쿼리
+JPQL 쿼리는 크게 동적 쿼리와 정적 쿼리로 나눌 수 있다.
+
+동적 쿼리: e.createQuery("select...") 처럼 JPQL을 문자로 완성해 직접 넘기는 것을 의미
+
+정적 쿼리: 미리 정의한 쿼리에 이름을 부여해 필요할 때 사용하는 것을 Named 쿼리라 한다.
+
+Named 쿼리는 애플리케이션 로딩 시점에 JPQL 문법을 체크하고 미리 파싱해둔다. 따라서 오류를 빨리 확인할 수 있고, 사용하는
+시점에는 파싱된 결과를 재사용하므로 성능상 이점도 있다. 그리고 Named 쿼리는 변하지 않는 정적 SQL이 생성되므로
+데이터베이스의 조회 성능 최적화에도 도움이 된다.
+
+```java
+@NamedQuery(
+    name = "Member.findByName",
+    query = "select m from Member m where m.name = :name
+)
+public class Member {
+
+}
+```
+
+```java
+List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.class)
+        .setParameter("username", "회원1")
+        .getResultList();
+```
+
+**Named 쿼리 - XML 에 정의**
+```xml
+<persistence-unit name="jpabook" >
+<mapping-file>META-INF/ormMember.xml</mapping-file>
+```
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm" version="2.1">
+    <named-query name="Member.findByUsername">
+        <query><![CDATA[
+            select m
+            from Member m
+            where m.username = :username
+        ]]></query>
+    </named-query>
+
+    <named-query name="Member.count">
+        <query>select count(m) from Member m</query>
+    </named-query>
+</entity-mappings>
+```
