@@ -174,9 +174,11 @@ ON절을 활용한 조인(JPA 2.1부터 지원)
 ### 서브쿼리
 
 - 나이가 평균보다 많은 회원
+- 
 **select m from Member m where m.age > (select avg(m2.age) from Member m2)**
 
 - 한 건이라도 주문한 고객
+- 
 **select m from Member m where (select count(o) from Order o where m = o.member) > 0**
 
 
@@ -195,12 +197,15 @@ ON절을 활용한 조인(JPA 2.1부터 지원)
 
 ### 서브 쿼리 - 예제
 - 팀A 소속인 회원
+- 
 **select m from Member m where exists (select t from m.team t where t.name = ‘팀A')**
 
 - 전체 상품 각각의 재고보다 주문량이 많은 주문들
+- 
 **select o from Order o where o.orderAmount > ALL (select p.stockAmount from Product p)**
 
 - 어떤 팀이든 팀에 소속된 회원
+- 
 **select m from Member m where m.team = ANY (select t from Team t)**
 
 ### JPA 써브 쿼리 한계
