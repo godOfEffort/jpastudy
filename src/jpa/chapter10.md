@@ -12,19 +12,19 @@ JPQL의 데이터 타입
 
 ### JPQL 문법
 
-select_문 :: =
-
-    select_절
+    select_문 :: =
     
-    from_절
+        select_절
     
-    [where_절]
+        from_절
     
-    [groupby_절]
+        [where_절]
     
-    [having_절]
+        [groupby_절]
     
-    [orderby_절]
+        [having_절]
+    
+        [orderby_절]
     
 update_문 :: = update_절 [where_절]
 delete_문 :: = delete_절 [where_절]
