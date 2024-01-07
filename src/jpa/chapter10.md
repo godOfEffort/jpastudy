@@ -72,6 +72,8 @@ Query query =
 em.createQuery("SELECT m.username, m.age from Member m");
 ```
 
+---
+
 ### 결과 조회 API
 
 1) query.getResultList(): 결과가 하나 이상일 때, 리스트 반환
@@ -95,6 +97,8 @@ query.setParameter("**username**", usernameParam);
 
 query.setParameter(**1**, usernameParam);
 
+
+---
 
 ### 프로젝션
 
@@ -182,6 +186,8 @@ ON절을 활용한 조인(JPA 2.1부터 지원)
 **select m from Member m where (select count(o) from Order o where m = o.member) > 0**
 
 
+---
+
 ### 서브 쿼리 지원 함수
 
 - [NOT] EXISTS (subquery): 서브쿼리에 결과가 존재하면 참
@@ -193,6 +199,9 @@ ON절을 활용한 조인(JPA 2.1부터 지원)
 - ANY, SOME: 같은 의미, 조건을 하나라도 만족하면 참
 
 - [NOT] IN (subquery): 서브쿼리의 결과 중 하나라도 같은 것이 있으면 참
+
+
+---
 
 
 ### 서브 쿼리 - 예제
