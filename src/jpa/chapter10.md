@@ -393,3 +393,9 @@ List<Member> resultList = em.createNamedQuery("Member.findByUsername", Member.cl
     </named-query>
 </entity-mappings>
 ```
+
+
+#### Named 쿼리 환경에 따른 설정
+1) XML이 항상 우선권을 가진다.
+
+2) 애플리케이션 운영 환경에 따라 다른 XML을 배포할 수 있다.
