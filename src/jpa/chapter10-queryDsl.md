@@ -154,13 +154,12 @@ select 절에 조회 대상을 지정하는 것을 프로젝션이라 한다.
 ```java
 QItem item = QItem.item;
 
-List<Tuple> result = query
-  .from(item)
-  .list(item.name, item.price); // === .list(new QTuple(item.name, item.price));
+// item의 name만 select, name이 String이니까 해당 타입으로 반환
+List<String> result = query.from(item).list(item.name);
 
-for (Tuple tuple: result) {
-  System.out.println("name = " + tuple.get(item.name));
-  System.out.println("price = " + tuple.get(item.price));
+
+for(String name : result){
+System.out.println("name : " + name);
 }
 ```
 
@@ -663,9 +662,7 @@ FlushModeType.COMMIT이 있는데 이는 커밋 시에만 플러시를 호출한
 
 #### 쿼리와 플러시 모드
 
-JPQL을 실행하기 전에 영속성 
-
-PQL은 영속성 컨텍스트에 있는 데이터를 고려하지 않고 데이터베이스에서 조회하기 때문에
+JPQL은 영속성 컨텍스트에 있는 데이터를 고려하지 않고 데이터베이스에서 조회하기 때문에
 
 따라서 JPQL을 실행하기 전에 영속성 컨텍스트의 내용을 데이터베이스에 반영해야 한다.
 
